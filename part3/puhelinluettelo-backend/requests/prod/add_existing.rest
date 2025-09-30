@@ -1,0 +1,7 @@
+POST https://puhelinluettelo-8u47.onrender.com/api/persons
+Content-Type: application/json
+
+{ 
+    "name": "Arto Hellas",
+    "number": "040-1234567"
+}
