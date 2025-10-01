@@ -88,8 +88,8 @@ const App = () => {
       if (isConfirmed) {
         personService
           .update(match.id, newPerson)
-          .then((r) => {
-            setPersons((prev) => prev.map((p) => p.id === r.id ? r : p))
+          .then((res) => {
+            setPersons((prev) => prev.map((p) => p.id === res.id ? res : p))
             setMessage({ text: `Updated ${newName} (${newNumber})!`, isError: false })
             resetInputs()
           })
@@ -102,7 +102,7 @@ const App = () => {
     } else {
       personService
         .create(newPerson)
-        .then(res => {
+        .then((res) => {
           setPersons((prev) => prev.concat(res))
           setMessage({ text: `Added ${newName} (${newNumber})!`, isError: false })
           resetInputs()
@@ -131,9 +131,9 @@ const App = () => {
   const handleDelete = (person) => {
     personService
       .remove(person.id)
-      .then((r) => {
-        setPersons((prev) => prev.filter((p) => p.id !== r.id))
-        setMessage({ text: `Deleted ${r.name}!`, isError: false })
+      .then(() => {
+        setPersons((prev) => prev.filter((p) => p.id !== person.id))
+        setMessage({ text: `Deleted ${person.name}!`, isError: false })
       })
       .catch((e) => {
         console.error(e)
