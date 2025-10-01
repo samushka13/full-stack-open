@@ -34,18 +34,14 @@ app.get('/', (_, response) => {
 })
 
 app.get('/info', (_, response) => {
-  let data = []
-
   Person.find({}).then((persons) => {
-    data = response.json(persons)
+    response.send(`
+      <div>
+        <p>The phonebook includes ${persons.length} people</p>
+        <p>${new Date()}</p>
+      </div>
+    `)
   })
-
-  response.send(`
-    <div>
-      <p>The phonebook includes ${data.length} people</p>
-      <p>${new Date()}</p>
-    </div>
-  `)
 })
 
 app.get('/api/persons', (_, response) => {
@@ -73,9 +69,9 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({ error: 'number is missing' })
   }
 
-  if (data.some((p) => p.name.toLowerCase() === body.name.toLowerCase())) {
-    return response.status(400).json({ error: 'name is already in the phonebook' })
-  }
+  // if (data.some((p) => p.name.toLowerCase() === body.name.toLowerCase())) {
+  //   return response.status(400).json({ error: 'name is already in the phonebook' })
+  // }
 
   const person = new Person({
     name: body.name,
