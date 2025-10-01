@@ -107,6 +107,10 @@ const App = () => {
           setMessage({ text: `Added ${newName} (${newNumber})!`, isError: false })
           resetInputs()
         })
+        .catch((e) => {
+          console.error(e)
+          setMessage({ text: e.response.data, isError: true })
+        })
     }
   }
 
