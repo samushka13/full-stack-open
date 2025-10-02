@@ -95,7 +95,7 @@ const App = () => {
           })
           .catch((e) => {
             console.error(e)
-            setMessage({ text: `${newName} does not exist on the server!`, isError: true })
+            setMessage({ text: e.response.data.error, isError: true })
           }
         )
       }
@@ -109,7 +109,7 @@ const App = () => {
         })
         .catch((e) => {
           console.error(e)
-          setMessage({ text: e.response.data, isError: true })
+          setMessage({ text: e.response.data.error, isError: true })
         })
     }
   }
@@ -141,7 +141,7 @@ const App = () => {
       })
       .catch((e) => {
         console.error(e)
-        setMessage({ text: `${person.name} does not exist on the server!`, isError: true })
+        setMessage({ text: e.response.data.error, isError: true })
       })
   }
 
