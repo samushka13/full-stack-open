@@ -18,7 +18,7 @@ mongoose
   .catch((e) => logger.error('error connection to MongoDB:', e.message))
 
 app.use(express.static('dist'))
-morgan.token('body', request => JSON.stringify(request.body))
+morgan.token('body', (request) => JSON.stringify(request.body))
 app.use(express.json())
 app.use(middleware.requestLogger)
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
