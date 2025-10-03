@@ -11,6 +11,10 @@ const blogSchema = mongoose.Schema({
     required: [true, 'Url is required']
   },
   likes: Number,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 blogSchema.set('toJSON', {
