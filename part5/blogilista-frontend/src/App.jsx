@@ -51,7 +51,10 @@ const App = () => {
     try {
       await blogService
         .create({ title, author, url })
-        .then((b) => setBlogs((prev) => prev.concat(b)))
+        .then((b) => setBlogs((prev) => prev.concat({
+          ...b,
+          user: { username: user.username, name: user.name }
+        })))
 
       showMessage(`"${title}" added!`)
     } catch {
@@ -70,7 +73,7 @@ const App = () => {
 
     const updatedBlog = {
       ...blog,
-      likes: blog.likes + 1,
+      likes: blog.likes + 1
     }
 
     try {
@@ -115,7 +118,7 @@ const App = () => {
       <>
         <h1>Welcome to the Bloglist!</h1>
 
-        <Togglable labelWhenNotVisible={'Log In'}>
+        <Togglable labelWhenNotVisible={'Login'}>
           <LoginForm
             username={username}
             password={password}
@@ -136,7 +139,7 @@ const App = () => {
 
       <div>
         <p>{user.name} is logged in</p>
-        <button type="submit" onClick={handleLogout}>Sign Out</button>
+        <button type="submit" onClick={handleLogout}>Logout</button>
 
         <h2>Current blogs</h2>
 
@@ -150,7 +153,7 @@ const App = () => {
           />
         )}
 
-        <Togglable labelWhenNotVisible={'Add a new blog'}>
+        <Togglable labelWhenNotVisible={'Add blog'}>
           <BlogForm onSubmit={addBlog} />
         </Togglable>
       </div>

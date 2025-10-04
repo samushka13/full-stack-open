@@ -19,7 +19,8 @@ const Blog = ({ username, blog, onLike, onDelete }) => {
 
   return (
     <div style={blogStyle}>
-      <a href={blog.url}>{blog.title}</a> by {blog.author}
+      {blog.title} by {blog.author}
+
       <button onClick={toggleVisibility}>{isVisible ? 'Hide' : 'View'}</button>
 
       {isVisible &&
