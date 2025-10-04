@@ -115,7 +115,7 @@ const App = () => {
       <>
         <h1>Welcome to the Bloglist!</h1>
 
-        <Togglable labelWhenVisible={'Log In'}>
+        <Togglable labelWhenNotVisible={'Log In'}>
           <LoginForm
             username={username}
             password={password}
@@ -144,13 +144,13 @@ const App = () => {
           <Blog
             key={b.id}
             blog={b}
-            user={user}
+            username={user.username}
             onDelete={() => deleteBlog(b)}
             onLike={() => likeBlog(b)}
           />
         )}
 
-        <Togglable labelWhenVisible={'Add a new blog'}>
+        <Togglable labelWhenNotVisible={'Add a new blog'}>
           <BlogForm onSubmit={addBlog} />
         </Togglable>
       </div>

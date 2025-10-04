@@ -10,12 +10,12 @@ const Togglable = ({ labelWhenVisible, labelWhenNotVisible, children }) => {
   if (isVisible) {
     return <>
       {children}
-      <button onClick={toggleVisibility}>{labelWhenNotVisible ?? 'Cancel'}</button>
+      <button onClick={toggleVisibility}>{labelWhenVisible ?? 'Cancel'}</button>
     </>
   }
 
   return (
-    <button onClick={toggleVisibility}>{labelWhenVisible}</button>
+    <button onClick={toggleVisibility}>{labelWhenNotVisible}</button>
   )
 }
 
