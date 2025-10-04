@@ -19,7 +19,7 @@ const Form = ({ match, name, number, onNameChange, onNumberChange, onAdd }) => {
         Number: <input onChange={onNumberChange} value={number} />
       </div>
       <div>
-        <button type="submit" onClick={onAdd}>{match ? "Update" : "Add"}</button>
+        <button type="submit" onClick={onAdd}>{match ? 'Update' : 'Add'}</button>
       </div>
     </form>
   )
@@ -27,7 +27,7 @@ const Form = ({ match, name, number, onNameChange, onNumberChange, onAdd }) => {
 
 const Persons = ({ persons, onDelete }) => {
   const onClick = (p) => window.confirm(`Delete ${p.name}`) && onDelete(p)
-  
+
   return (
     <div>
       {persons.map((p) => (
@@ -42,10 +42,10 @@ const Persons = ({ persons, onDelete }) => {
 
 const Notification = ({ message }) => {
   const style = {
-    color: message.isError ? "red" : "green",
-    background: "lightgrey",
+    color: message.isError ? 'red' : 'green',
+    background: 'lightgrey',
     fontSize: 20,
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
@@ -59,7 +59,7 @@ const Notification = ({ message }) => {
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([]) 
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterString, setFilterString] = useState('')
@@ -69,7 +69,7 @@ const App = () => {
     ? persons.filter((p) => p.name.toLowerCase().includes(filterString))
     : persons
 
-  const match = persons.find((p) => p.name === newName);
+  const match = persons.find((p) => p.name === newName)
 
   const resetInputs = () => {
     setNewName('')
@@ -97,7 +97,7 @@ const App = () => {
             console.error(e)
             setMessage({ text: e.response.data.error, isError: true })
           }
-        )
+          )
       }
     } else {
       personService
@@ -174,7 +174,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={personsToShow} onDelete={handleDelete} /> 
+      <Persons persons={personsToShow} onDelete={handleDelete} />
     </div>
   )
 

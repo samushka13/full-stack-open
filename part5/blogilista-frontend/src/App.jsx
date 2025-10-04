@@ -2,34 +2,19 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
-const Notification = ({ message }) => {
-  const style = {
-    color: message.isError ? "red" : "green",
-    background: "lightgrey",
-    fontSize: 20,
-    borderStyle: "solid",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  }
-
-  return (
-    <div style={style}>
-      {message.text}
-    </div>
-  )
-}
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
+import Notification from './components/Notification'
 
 const App = () => {
   const [user, setUser] = useState(null)
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [message, setMessage] = useState({ text: '', isError: false })
-  const [newTitle, setNewTitle] = useState('') 
-  const [newAuthor, setNewAuthor] = useState('') 
-  const [newUrl, setNewUrl] = useState('') 
+
+  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
 
   const showMessage = (text, isError) => {
     setMessage({ text, isError: isError ?? false })
@@ -38,7 +23,7 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({ username, password })
       blogService.setToken(user.token)
@@ -62,26 +47,54 @@ const App = () => {
     }
   }
 
-  const addBlog = async () => {
+  const addBlog = async (title, author, url) => {
     try {
-      await blogService.create({ title: newTitle, author: newAuthor, url: newUrl })
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
-      showMessage(`"${newTitle}" added!`)
+      await blogService
+        .create({ title, author, url })
+        .then((b) => setBlogs((prev) => prev.concat(b)))
+
+      showMessage(`"${title}" added!`)
     } catch {
-      showMessage(`Adding "${newTitle}" failed!`, true)
+      showMessage(`Adding "${title}" failed!`, true)
     }
   }
 
-  // const deleteBlog = async (blog) => {
-  //   try {
-  //     await blogService.remove(blog.id)
-  //     showMessage(`"${blog.title}" deleted!`)
-  //   } catch {
-  //     showMessage(`Deleting "${blog.title}" failed!`, true)
-  //   }
-  // }
+  const likeBlog = async (blog) => {
+    const blogToUpdate = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1,
+      user: blog.user.id
+    }
+
+    const updatedBlog = {
+      ...blog,
+      likes: blog.likes + 1,
+    }
+
+    try {
+      await blogService
+        .update(blog.id, blogToUpdate)
+        .then(() => setBlogs((prev) => prev.map((b) => b.id === blog.id ? updatedBlog : b)))
+
+      showMessage(`"${blog.title}" liked!`)
+    } catch {
+      showMessage(`Liking "${blog.title}" failed!`, true)
+    }
+  }
+
+  const deleteBlog = async (blog) => {
+    try {
+      await blogService
+        .remove(blog.id)
+        .then(() => setBlogs((prev) => prev.filter((b) => b.id !== blog.id)))
+
+      showMessage(`"${blog.title}" deleted!`)
+    } catch {
+      showMessage(`Deleting "${blog.title}" failed!`, true)
+    }
+  }
 
   useEffect(() => {
     blogService.getAll().then(setBlogs)
@@ -99,43 +112,27 @@ const App = () => {
 
   if (!user) {
     return (
-      <div>
-        <h2>Log in to application</h2>
+      <>
+        <h1>Welcome to the Bloglist!</h1>
 
-        {message.text && <Notification message={message} />}
-
-        <form onSubmit={handleLogin}>
-          <div>
-            <label>
-              Username:
-              <input
-                type="text"
-                value={username}
-                onChange={({ target }) => setUsername(target.value)}
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              Password:
-              <input
-                type="password"
-                value={password}
-                onChange={({ target }) => setPassword(target.value)}
-              />
-            </label>
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </div>
+        <Togglable labelWhenVisible={'Log In'}>
+          <LoginForm
+            username={username}
+            password={password}
+            handleLogin={handleLogin}
+            setUsername={setUsername}
+            setPassword={setPassword}
+          />
+        </Togglable>
+      </>
     )
   }
 
   return (
     <div>
-      <h1>Welcome to the Bloglist, {user.name ?? user.username}!</h1>
-
       {message.text && <Notification message={message} />}
+
+      <h1>Welcome to the Bloglist, {user.name ?? user.username}!</h1>
 
       <div>
         <p>{user.name} is logged in</p>
@@ -143,49 +140,19 @@ const App = () => {
 
         <h2>Current blogs</h2>
 
-        {blogs.map((b) =>
-          <Blog key={b.id} blog={b} />
-          // <Blog key={b.id} blog={b} onDelete={() => deleteBlog(b)} />
+        {sortedBlogs.map((b) =>
+          <Blog
+            key={b.id}
+            blog={b}
+            user={user}
+            onDelete={() => deleteBlog(b)}
+            onLike={() => likeBlog(b)}
+          />
         )}
 
-        <h3>Add a new blog</h3>
-
-        <form onSubmit={addBlog}>
-          <div>
-            <label>
-              Title:
-              <input
-                type="text"
-                value={newTitle}
-                onChange={({ target }) => setNewTitle(target.value)}
-              />
-            </label>
-          </div>
-
-          <div>
-            <label>
-              Author:
-              <input
-                type="text"
-                value={newAuthor}
-                onChange={({ target }) => setNewAuthor(target.value)}
-              />
-            </label>
-          </div>
-
-          <div>
-            <label>
-              Url:
-              <input
-                type="text"
-                value={newUrl}
-                onChange={({ target }) => setNewUrl(target.value)}
-              />
-            </label>
-          </div>
-
-          <button type="submit">Save</button>
-        </form>
+        <Togglable labelWhenVisible={'Add a new blog'}>
+          <BlogForm onSubmit={addBlog} />
+        </Togglable>
       </div>
     </div>
   )

@@ -13,14 +13,14 @@ const getAll = async () => {
   return request.data
 }
 
-const create = async (newBlog) => {
+const create = async (blog) => {
   const config = { headers: { Authorization: TOKEN } }
-  const response = await axios.post(BASE_URL, newBlog, config)
+  const response = await axios.post(BASE_URL, blog, config)
   return response.data
 }
 
-const update = async (id, updatedBlog) => {
-  const request = await axios.put(`${BASE_URL}/${id}`, updatedBlog)
+const update = async (id, blog) => {
+  const request = await axios.put(`${BASE_URL}/${id}`, blog)
   return request.data
 }
 
