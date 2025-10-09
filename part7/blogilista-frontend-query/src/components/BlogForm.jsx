@@ -1,17 +1,48 @@
 import { useState } from "react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useNotificationDispatch } from "../NotificationContext";
+import { useUserValue } from "../UserContext";
+import blogService from "../services/blogs";
 
-const BlogForm = ({ onSubmit }) => {
+const BlogForm = () => {
+  const queryClient = useQueryClient();
+  const notificationDispatch = useNotificationDispatch();
+  const user = useUserValue();
+
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newUrl, setNewUrl] = useState("");
 
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => {
+      queryClient.setQueryData(["blogs"], (prev) =>
+        prev.concat({
+          ...newBlog,
+          user: { username: user.username, name: user.name },
+        }),
+      );
+
+      setNewTitle("");
+      setNewAuthor("");
+      setNewUrl("");
+
+      notificationDispatch({
+        type: "ADD_SUCCESS",
+        payload: { title: newBlog.title },
+      });
+    },
+    onError: (_, variable) => {
+      notificationDispatch({
+        type: "ADD_FAIL",
+        payload: { title: variable.title },
+      });
+    },
+  });
+
   const addBlog = async (event) => {
     event.preventDefault();
-
-    await onSubmit(newTitle, newAuthor, newUrl);
-    setNewTitle("");
-    setNewAuthor("");
-    setNewUrl("");
+    newBlogMutation.mutate({ title: newTitle, author: newAuthor, url: newUrl });
   };
 
   return (

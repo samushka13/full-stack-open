@@ -19,14 +19,14 @@ const create = async (blog) => {
   return response.data;
 };
 
-const update = async (id, blog) => {
-  const request = await axios.put(`${BASE_URL}/${id}`, blog);
+const update = async (blog) => {
+  const request = await axios.put(`${BASE_URL}/${blog.id}`, blog);
   return request.data;
 };
 
-const remove = async (id) => {
+const remove = async (blog) => {
   const config = { headers: { Authorization: TOKEN } };
-  const request = await axios.delete(`${BASE_URL}/${id}`, config);
+  const request = await axios.delete(`${BASE_URL}/${blog.id}`, config);
   return request.data;
 };
 

@@ -109,6 +109,8 @@ const App = () => {
   if (!user) {
     return (
       <>
+        <Notification />
+
         <h1>Welcome to the Bloglist!</h1>
 
         <Togglable labelWhenNotVisible={"Login"}>
