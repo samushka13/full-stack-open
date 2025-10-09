@@ -1,123 +1,110 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import Blog from "./components/Blog";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
+import {
+  handleLogin,
+  handleLogout,
+  handleUserLoginStatusCheck,
+} from "./reducers/userReducer";
+import {
+  initializeBlogs,
+  addBlog,
+  likeBlog,
+  deleteBlog,
+} from "./reducers/blogReducer";
+import { showNotification } from "./reducers/notificationReducer";
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [blogs, setBlogs] = useState([]);
+  const dispatch = useDispatch();
+  const user = useSelector(({ user }) => user);
+  const blogs = useSelector(({ blogs }) => blogs);
+  const sortedBlogs = blogs.slice().sort((a, b) => b.likes - a.likes);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState({ text: "", isError: false });
 
-  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
-
-  const showMessage = (text, isError) => {
-    setMessage({ text, isError: isError ?? false });
-    setTimeout(() => setMessage({ text: "", isError: false }), 3000);
-  };
-
-  const handleLogin = async (event) => {
+  const handleUserLogin = async (event) => {
     event.preventDefault();
 
     try {
-      const user = await loginService.login({ username, password });
-      blogService.setToken(user.token);
-      window.localStorage.setItem("loggedInUser", JSON.stringify(user));
-      setUser(user);
+      await dispatch(handleLogin(username, password)).unwrap();
       setUsername("");
       setPassword("");
     } catch {
-      showMessage("Invalid credentials!", true);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      blogService.setToken("");
-      window.localStorage.removeItem("loggedInUser");
-      setUser(null);
-      showMessage("Logout successful!");
-    } catch {
-      showMessage("Logout failed!", true);
-    }
-  };
-
-  const addBlog = async (title, author, url) => {
-    try {
-      await blogService.create({ title, author, url }).then((b) =>
-        setBlogs((prev) =>
-          prev.concat({
-            ...b,
-            user: { username: user.username, name: user.name },
-          }),
-        ),
+      dispatch(
+        showNotification({
+          text: "Invalid credentials!",
+          isError: true,
+        }),
       );
-
-      showMessage(`"${title}" added!`);
-    } catch {
-      showMessage(`Adding "${title}" failed!`, true);
     }
   };
 
-  const likeBlog = async (blog) => {
-    const blogToUpdate = {
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1,
-      user: blog.user.id,
-    };
-
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
-    };
-
+  const handleUserLogout = async () => {
     try {
-      await blogService
-        .update(blog.id, blogToUpdate)
-        .then(() =>
-          setBlogs((prev) =>
-            prev.map((b) => (b.id === blog.id ? updatedBlog : b)),
-          ),
-        );
-
-      showMessage(`"${blog.title}" liked!`);
+      await dispatch(handleLogout()).unwrap();
+      dispatch(showNotification({ text: "Logout successful!" }));
     } catch {
-      showMessage(`Liking "${blog.title}" failed!`, true);
+      dispatch(
+        showNotification({
+          text: "Logout failed!",
+          isError: true,
+        }),
+      );
     }
   };
 
-  const deleteBlog = async (blog) => {
+  const handleAddBlog = async (title, author, url) => {
     try {
-      await blogService
-        .remove(blog.id)
-        .then(() => setBlogs((prev) => prev.filter((b) => b.id !== blog.id)));
-
-      showMessage(`"${blog.title}" deleted!`);
+      await dispatch(addBlog({ title, author, url }, user)).unwrap();
+      dispatch(showNotification({ text: `"${title}" added!` }));
     } catch {
-      showMessage(`Deleting "${blog.title}" failed!`, true);
+      dispatch(
+        showNotification({
+          text: `Adding "${title}" failed!`,
+          isError: true,
+        }),
+      );
+    }
+  };
+
+  const handleLikeBlog = async (blog) => {
+    try {
+      await dispatch(likeBlog(blog)).unwrap();
+      dispatch(showNotification({ text: `"${blog.title}" liked!` }));
+    } catch {
+      dispatch(
+        showNotification({
+          text: `Liking "${blog.title}" failed!`,
+          isError: true,
+        }),
+      );
+    }
+  };
+
+  const handleDeleteBlog = async (blog) => {
+    try {
+      await dispatch(deleteBlog(blog.id)).unwrap();
+      dispatch(showNotification({ text: `"${blog.title}" deleted!` }));
+    } catch {
+      dispatch(
+        showNotification({
+          text: `Deleting "${blog.title}" failed!`,
+          isError: true,
+        }),
+      );
     }
   };
 
   useEffect(() => {
-    blogService.getAll().then(setBlogs);
-  }, []);
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedInUser");
-
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
+    dispatch(handleUserLoginStatusCheck());
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   if (!user) {
     return (
@@ -128,7 +115,7 @@ const App = () => {
           <LoginForm
             username={username}
             password={password}
-            handleLogin={handleLogin}
+            handleLogin={handleUserLogin}
             setUsername={setUsername}
             setPassword={setPassword}
           />
@@ -139,13 +126,13 @@ const App = () => {
 
   return (
     <div>
-      {message.text && <Notification message={message} />}
+      <Notification />
 
       <h1>Welcome to the Bloglist, {user.name ?? user.username}!</h1>
 
       <div>
         <p>{user.name} is logged in</p>
-        <button type="submit" onClick={handleLogout}>
+        <button type="submit" onClick={handleUserLogout}>
           Logout
         </button>
 
@@ -156,13 +143,13 @@ const App = () => {
             key={b.id}
             blog={b}
             username={user.username}
-            onDelete={() => deleteBlog(b)}
-            onLike={() => likeBlog(b)}
+            onDelete={() => handleDeleteBlog(b)}
+            onLike={() => handleLikeBlog(b)}
           />
         ))}
 
         <Togglable labelWhenNotVisible={"Add blog"}>
-          <BlogForm onSubmit={addBlog} />
+          <BlogForm onSubmit={handleAddBlog} />
         </Togglable>
       </div>
     </div>
