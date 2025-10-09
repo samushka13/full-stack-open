@@ -11,6 +11,9 @@ const Togglable = ({ labelWhenVisible, labelWhenNotVisible, children }) => {
     return (
       <>
         {children}
+
+        <p></p>
+
         <button onClick={toggleVisibility}>
           {labelWhenVisible ?? "Cancel"}
         </button>

@@ -1,25 +1,31 @@
+import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { useNotificationDispatch } from "../NotificationContext";
 import { useUserValue } from "../UserContext";
 
 import blogService from "../services/blogs";
 
-const Blog = ({ blog }) => {
+const BlogItem = ({ blog }) => {
   const queryClient = useQueryClient();
   const queryKey = ["blogs"];
   const notificationDispatch = useNotificationDispatch();
   const user = useUserValue();
-  const navigate = useNavigate();
+
+  const [isVisible, setIsVisible] = useState(false);
 
   const showDeleteButton = user?.username === blog.user.username;
 
   const blogStyle = {
-    marginTop: 30,
+    paddingTop: 10,
     paddingLeft: 2,
+    border: "solid",
+    borderWidth: 1,
     marginBottom: 5,
   };
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
 
   const updateBlogMutation = useMutation({
     mutationFn: blogService.update,
@@ -46,7 +52,6 @@ const Blog = ({ blog }) => {
         type: "DELETE_SUCCESS",
         payload: { title: blog.title },
       });
-      navigate("/");
     },
     onError: (_, blog) => {
       notificationDispatch({
@@ -75,23 +80,30 @@ const Blog = ({ blog }) => {
 
   return (
     <div style={blogStyle}>
-      <h2>{blog.title}</h2>
-      <p>by {blog.author}</p>
+      <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+      &nbsp;by {blog.author}&nbsp;
+      <button onClick={toggleVisibility}>{isVisible ? "Hide" : "View"}</button>
+      {isVisible && (
+        <>
+          <p>
+            Url:&nbsp;
+            <a href={blog.url} target="_blank">
+              {blog.url}
+            </a>
+          </p>
 
-      <p>
-        Url:&nbsp;
-        <a href={blog.url} target="_blank">
-          {blog.url}
-        </a>
-      </p>
-      <p>
-        Likes: {blog.likes}
-        <button onClick={likeBlog}>Like</button>
-      </p>
-      <p>Added by: {blog.user.name ?? blog.user.username}</p>
-      {showDeleteButton && <button onClick={deleteBlog}>Delete</button>}
+          <p>
+            Likes: {blog.likes}
+            <button onClick={likeBlog}>Like</button>
+          </p>
+
+          <p>Added by: {blog.user.name ?? blog.user.username}</p>
+
+          {showDeleteButton && <button onClick={deleteBlog}>Delete</button>}
+        </>
+      )}
     </div>
   );
 };
 
-export default Blog;
+export default BlogItem;
