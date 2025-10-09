@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -13,6 +14,8 @@ const Blog = ({ blog }) => {
   const user = useUserValue();
   const navigate = useNavigate();
 
+  const [newComment, setNewComment] = useState("");
+
   const showDeleteButton = user?.username === blog.user.username;
 
   const blogStyle = {
@@ -21,7 +24,7 @@ const Blog = ({ blog }) => {
     marginBottom: 5,
   };
 
-  const updateBlogMutation = useMutation({
+  const likeBlogMutation = useMutation({
     mutationFn: blogService.update,
     onSuccess: (updatedBlog) => {
       queryClient.invalidateQueries({ queryKey });
@@ -33,6 +36,23 @@ const Blog = ({ blog }) => {
     onError: (_, blog) => {
       notificationDispatch({
         type: "LIKE_FAIL",
+        payload: { title: blog.title },
+      });
+    },
+  });
+
+  const commentBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: (commentedBlog) => {
+      queryClient.invalidateQueries({ queryKey });
+      notificationDispatch({
+        type: "COMMENT_SUCCESS",
+        payload: { title: commentedBlog.title },
+      });
+    },
+    onError: (_, blog) => {
+      notificationDispatch({
+        type: "COMMENT_FAIL",
         payload: { title: blog.title },
       });
     },
@@ -56,17 +76,32 @@ const Blog = ({ blog }) => {
     },
   });
 
+  const blogBaseProps = {
+    id: blog.id,
+    title: blog.title,
+    author: blog.author,
+    url: blog.url,
+    likes: blog.likes,
+    comments: blog.comments,
+    user: blog.user.id,
+  };
+
   const likeBlog = () => {
     const blogToUpdate = {
-      id: blog.id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
+      ...blogBaseProps,
       likes: blog.likes + 1,
-      user: blog.user.id,
     };
 
-    updateBlogMutation.mutate(blogToUpdate);
+    likeBlogMutation.mutate(blogToUpdate);
+  };
+
+  const commentBlog = () => {
+    const blogToUpdate = {
+      ...blogBaseProps,
+      comments: blog.comments.concat(newComment),
+    };
+
+    commentBlogMutation.mutate(blogToUpdate);
   };
 
   const deleteBlog = () => {
@@ -89,7 +124,26 @@ const Blog = ({ blog }) => {
         <button onClick={likeBlog}>Like</button>
       </p>
       <p>Added by: {blog.user.name ?? blog.user.username}</p>
-      {showDeleteButton && <button onClick={deleteBlog}>Delete</button>}
+
+      <div>
+        {showDeleteButton && <button onClick={deleteBlog}>Delete</button>}
+      </div>
+
+      <h3>Comments:</h3>
+
+      <input
+        type="text"
+        value={newComment}
+        onChange={({ target }) => setNewComment(target.value)}
+      />
+
+      <button onClick={commentBlog}>Add comment</button>
+
+      <ul>
+        {blog.comments.map((comment, i) => (
+          <li key={i}>{comment}</li>
+        ))}
+      </ul>
     </div>
   );
 };

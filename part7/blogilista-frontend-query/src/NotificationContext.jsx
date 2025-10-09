@@ -52,6 +52,17 @@ const notificationReducer = (state, action) => {
         text: `Liking "${payload.title}" failed!`,
         isError: true,
       };
+    case "COMMENT_SUCCESS":
+      return {
+        ...notification,
+        text: `"Comment on ${payload.title}" added!`,
+      };
+    case "COMMENT_FAIL":
+      return {
+        ...notification,
+        text: `Commenting on "${payload.title}" failed!`,
+        isError: true,
+      };
     case "DELETE_SUCCESS":
       return {
         ...notification,

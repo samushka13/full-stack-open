@@ -22,6 +22,7 @@ router.post("/", middleware.userExtractor, async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes ?? 0,
+    comments: body.comments ?? [],
     user: user._id,
   });
 
@@ -45,6 +46,7 @@ router.put("/:id", async (request, response) => {
     author: request.body.author ?? match.author,
     url: request.body.url ?? match.url,
     likes: request.body.likes ?? match.likes ?? 0,
+    comments: request.body.comments ?? match.comments ?? [],
   };
 
   const updatedBlog = await Blog.findByIdAndUpdate(id, blogToUpdate);
