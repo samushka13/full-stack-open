@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { Button, Card } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { useNotificationDispatch } from "../NotificationContext";
 import { useUserValue } from "../UserContext";
@@ -18,11 +23,13 @@ const BlogItem = ({ blog }) => {
   const showDeleteButton = user?.username === blog.user.username;
 
   const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
+    backgroundColor: "lightcyan",
     border: "solid",
+    borderColor: "lightblue",
     borderWidth: 1,
     marginBottom: 5,
+    padding: 15,
+    paddingTop: 0,
   };
 
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -79,12 +86,35 @@ const BlogItem = ({ blog }) => {
   };
 
   return (
-    <div style={blogStyle}>
-      <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-      &nbsp;by {blog.author}&nbsp;
-      <button onClick={toggleVisibility}>{isVisible ? "Hide" : "View"}</button>
+    <Card style={blogStyle}>
+      <div>
+        <h4>
+          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+          &nbsp;by {blog.author}&nbsp;
+        </h4>
+
+        <Button
+          startIcon={isVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          onClick={toggleVisibility}
+          variant="contained"
+          color="primary"
+          type="submit"
+        >
+          {isVisible ? "Hide" : "View"}
+        </Button>
+      </div>
+
       {isVisible && (
-        <>
+        <div>
+          <div
+            style={{
+              height: 1,
+              width: "100%",
+              backgroundColor: "lightblue",
+              marginTop: 20,
+            }}
+          />
+
           <p>
             Url:&nbsp;
             <a href={blog.url} target="_blank">
@@ -92,17 +122,32 @@ const BlogItem = ({ blog }) => {
             </a>
           </p>
 
-          <p>
-            Likes: {blog.likes}
-            <button onClick={likeBlog}>Like</button>
-          </p>
+          <p>Likes: {blog.likes}</p>
+
+          <Button
+            startIcon={<ThumbUpIcon />}
+            variant="contained"
+            color="success"
+            onClick={likeBlog}
+          >
+            Like
+          </Button>
 
           <p>Added by: {blog.user.name ?? blog.user.username}</p>
 
-          {showDeleteButton && <button onClick={deleteBlog}>Delete</button>}
-        </>
+          {showDeleteButton && (
+            <Button
+              startIcon={<DeleteIcon />}
+              variant="contained"
+              color="secondary"
+              onClick={deleteBlog}
+            >
+              Delete
+            </Button>
+          )}
+        </div>
       )}
-    </div>
+    </Card>
   );
 };
 

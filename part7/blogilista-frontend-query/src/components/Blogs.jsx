@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMatch } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
 
 import blogService from "../services/blogs";
 
@@ -28,13 +29,13 @@ const Blogs = () => {
 
   return (
     <div>
-      <p></p>
+      <h2 style={{ paddingLeft: 5 }}>Blogs</h2>
 
-      <Togglable labelWhenNotVisible={"Add blog"}>
+      <Togglable icon={<AddIcon />} labelWhenNotVisible={"Add blog"}>
         <BlogForm />
       </Togglable>
 
-      <h2>Current blogs</h2>
+      <h3 style={{ paddingLeft: 5 }}>Current blogs</h3>
 
       {result.isPending ? (
         <div>Fetching blogs...</div>

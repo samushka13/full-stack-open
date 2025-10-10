@@ -1,22 +1,42 @@
 import { Link } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 
 const User = ({ user }) => {
   return (
     <div>
-      <h2>{user.name}</h2>
+      <h2 style={{ paddingLeft: 5 }}>{user.name} | Added blogs</h2>
 
       {user.blogs.length ? (
-        <>
-          <h3>Added blogs:</h3>
+        <Table>
+          <TableHead style={{ backgroundColor: "lightcyan" }}>
+            <TableCell>
+              <b>Title</b>
+            </TableCell>
 
-          <ul>
-            {user.blogs.map((b) => (
-              <li key={b.id}>
-                <Link to={`/blogs/${b.id}`}>{b.title}</Link>
-              </li>
+            <TableCell align="right">Author</TableCell>
+          </TableHead>
+
+          <TableBody>
+            {user.blogs.map((b, i) => (
+              <TableRow
+                key={b.id}
+                style={{ backgroundColor: i % 2 ? "whitesmoke" : "white" }}
+              >
+                <TableCell>
+                  <Link to={`/blogs/${b.id}`}>{b.title}</Link>
+                </TableCell>
+
+                <TableCell align="right">{b.author}</TableCell>
+              </TableRow>
             ))}
-          </ul>
-        </>
+          </TableBody>
+        </Table>
       ) : (
         <p>No added blogs</p>
       )}

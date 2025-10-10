@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { Button, TextField } from "@mui/material";
+
 import { useNotificationDispatch } from "../NotificationContext";
 import { useUserValue } from "../UserContext";
 import blogService from "../services/blogs";
+
+import Spacer from "./Spacer";
 
 const BlogForm = () => {
   const queryClient = useQueryClient();
@@ -47,43 +51,50 @@ const BlogForm = () => {
 
   return (
     <div>
-      <h2>Add a new blog</h2>
+      <h3 style={{ paddingLeft: 5 }}>Add a new blog</h3>
 
       <form onSubmit={addBlog}>
         <div>
-          <label>
-            Title:&nbsp;
-            <input
-              type="text"
-              value={newTitle}
-              onChange={({ target }) => setNewTitle(target.value)}
-            />
-          </label>
+          <TextField
+            fullWidth
+            size="small"
+            label="Title"
+            value={newTitle}
+            onChange={({ target }) => setNewTitle(target.value)}
+          />
         </div>
+
+        <Spacer />
 
         <div>
-          <label>
-            Author:&nbsp;
-            <input
-              type="text"
-              value={newAuthor}
-              onChange={({ target }) => setNewAuthor(target.value)}
-            />
-          </label>
+          <TextField
+            fullWidth
+            size="small"
+            label="Author"
+            value={newAuthor}
+            onChange={({ target }) => setNewAuthor(target.value)}
+          />
         </div>
+
+        <Spacer />
 
         <div>
-          <label>
-            Url:&nbsp;
-            <input
-              type="text"
-              value={newUrl}
-              onChange={({ target }) => setNewUrl(target.value)}
-            />
-          </label>
+          <TextField
+            fullWidth
+            size="small"
+            label="URL"
+            value={newUrl}
+            onChange={({ target }) => setNewUrl(target.value)}
+          />
         </div>
 
-        <button type="submit">Save</button>
+        <Spacer />
+
+        <div>
+          <Button variant="contained" color="primary" type="submit">
+            Save
+          </Button>
+        </div>
       </form>
     </div>
   );

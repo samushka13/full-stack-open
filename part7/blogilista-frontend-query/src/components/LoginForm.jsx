@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { Button, TextField } from "@mui/material";
 
 import { useUserDispatch } from "../UserContext";
 import { useNotificationDispatch } from "../NotificationContext";
 
 import loginService from "../services/login";
+
+import Spacer from "./Spacer";
 
 const LoginForm = () => {
   const userDispatch = useUserDispatch();
@@ -27,32 +30,35 @@ const LoginForm = () => {
 
   return (
     <div>
-      <h2>Log in to the app</h2>
-
       <form onSubmit={handleLogin}>
         <div>
-          <label>
-            Username:&nbsp;
-            <input
-              type="text"
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </label>
+          <TextField
+            size="small"
+            label="Username"
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
         </div>
+
+        <Spacer />
 
         <div>
-          <label>
-            Password:&nbsp;
-            <input
-              type="password"
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </label>
+          <TextField
+            size="small"
+            label="Password"
+            type="password"
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
         </div>
 
-        <button type="submit">Login</button>
+        <Spacer />
+
+        <div>
+          <Button variant="contained" color="primary" type="submit">
+            Login
+          </Button>
+        </div>
       </form>
     </div>
   );

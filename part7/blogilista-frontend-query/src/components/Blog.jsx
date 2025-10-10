@@ -1,11 +1,24 @@
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  TextField,
+} from "@mui/material";
+import AddCommentIcon from "@mui/icons-material/AddComment";
+import CommentIcon from "@mui/icons-material/Comment";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 
 import { useNotificationDispatch } from "../NotificationContext";
 import { useUserValue } from "../UserContext";
 
 import blogService from "../services/blogs";
+import Spacer from "./Spacer";
 
 const Blog = ({ blog }) => {
   const queryClient = useQueryClient();
@@ -19,9 +32,11 @@ const Blog = ({ blog }) => {
   const showDeleteButton = user?.username === blog.user.username;
 
   const blogStyle = {
-    marginTop: 30,
-    paddingLeft: 2,
-    marginBottom: 5,
+    backgroundColor: "lightcyan",
+    borderRadius: 5,
+    marginTop: 10,
+    padding: 10,
+    paddingInline: 20,
   };
 
   const likeBlogMutation = useMutation({
@@ -111,7 +126,16 @@ const Blog = ({ blog }) => {
   return (
     <div style={blogStyle}>
       <h2>{blog.title}</h2>
-      <p>by {blog.author}</p>
+      <h3>by {blog.author}</h3>
+
+      <div
+        style={{
+          height: 1,
+          width: "100%",
+          backgroundColor: "lightblue",
+          marginTop: 20,
+        }}
+      />
 
       <p>
         Url:&nbsp;
@@ -119,31 +143,76 @@ const Blog = ({ blog }) => {
           {blog.url}
         </a>
       </p>
-      <p>
-        Likes: {blog.likes}
-        <button onClick={likeBlog}>Like</button>
-      </p>
+
+      <p>Likes: {blog.likes}</p>
+
+      <Button
+        startIcon={<ThumbUpIcon />}
+        variant="contained"
+        color="success"
+        onClick={likeBlog}
+      >
+        Like
+      </Button>
+
       <p>Added by: {blog.user.name ?? blog.user.username}</p>
 
       <div>
-        {showDeleteButton && <button onClick={deleteBlog}>Delete</button>}
+        {showDeleteButton && (
+          <Button
+            startIcon={<DeleteIcon />}
+            variant="contained"
+            color="secondary"
+            onClick={deleteBlog}
+          >
+            Delete
+          </Button>
+        )}
       </div>
+
+      <div
+        style={{
+          height: 1,
+          width: "100%",
+          backgroundColor: "lightblue",
+          marginTop: 20,
+        }}
+      />
 
       <h3>Comments:</h3>
 
-      <input
-        type="text"
-        value={newComment}
-        onChange={({ target }) => setNewComment(target.value)}
-      />
+      <div>
+        <TextField
+          fullWidth
+          size="small"
+          label="Comment"
+          value={newComment}
+          onChange={({ target }) => setNewComment(target.value)}
+        />
 
-      <button onClick={commentBlog}>Add comment</button>
+        <Spacer />
 
-      <ul>
+        <Button
+          startIcon={<AddCommentIcon />}
+          disabled={!newComment}
+          variant="contained"
+          onClick={commentBlog}
+        >
+          Add comment
+        </Button>
+      </div>
+
+      <List>
         {blog.comments.map((comment, i) => (
-          <li key={i}>{comment}</li>
+          <ListItem key={i}>
+            <ListItemIcon>
+              <CommentIcon />
+            </ListItemIcon>
+
+            <ListItemText primary={comment} />
+          </ListItem>
         ))}
-      </ul>
+      </List>
     </div>
   );
 };

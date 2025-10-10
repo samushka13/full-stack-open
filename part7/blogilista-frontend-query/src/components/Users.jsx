@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useMatch } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 
 import User from "./User";
 
@@ -24,29 +31,32 @@ const Users = () => {
 
   return (
     <div>
-      <h2>Users</h2>
+      <h2 style={{ paddingLeft: 5 }}>Users</h2>
 
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <b>User</b>
-            </td>
-            <td align="right">
-              <b>Blogs</b>
-            </td>
-          </tr>
+      <Table>
+        <TableHead style={{ backgroundColor: "lightcyan" }}>
+          <TableCell>
+            <b>User</b>
+          </TableCell>
+          <TableCell align="right">
+            <b>Blogs</b>
+          </TableCell>
+        </TableHead>
 
-          {users.map((u) => (
-            <tr key={u.id}>
-              <td>
+        <TableBody>
+          {users.map((u, i) => (
+            <TableRow
+              key={u.id}
+              style={{ backgroundColor: i % 2 ? "whitesmoke" : "white" }}
+            >
+              <TableCell>
                 <Link to={`/users/${u.id}`}>{u.name}</Link>
-              </td>
-              <td align="right">{u.blogs.length}</td>
-            </tr>
+              </TableCell>
+              <TableCell align="right">{u.blogs.length}</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };

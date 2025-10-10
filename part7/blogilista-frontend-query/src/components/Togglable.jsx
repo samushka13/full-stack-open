@@ -1,6 +1,14 @@
 import { useState } from "react";
+import { Button } from "@mui/material";
 
-const Togglable = ({ labelWhenVisible, labelWhenNotVisible, children }) => {
+import Spacer from "./Spacer";
+
+const Togglable = ({
+  labelWhenVisible,
+  labelWhenNotVisible,
+  icon,
+  children,
+}) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => {
@@ -10,18 +18,31 @@ const Togglable = ({ labelWhenVisible, labelWhenNotVisible, children }) => {
   if (isVisible) {
     return (
       <>
-        {children}
+        <div>{children}</div>
 
-        <p></p>
+        <Spacer />
 
-        <button onClick={toggleVisibility}>
-          {labelWhenVisible ?? "Cancel"}
-        </button>
+        <div>
+          <Button onClick={toggleVisibility} color="primary">
+            {labelWhenVisible ?? "Cancel"}
+          </Button>
+        </div>
       </>
     );
   }
 
-  return <button onClick={toggleVisibility}>{labelWhenNotVisible}</button>;
+  return (
+    <div>
+      <Button
+        startIcon={icon}
+        onClick={toggleVisibility}
+        variant="contained"
+        color="primary"
+      >
+        {labelWhenNotVisible}
+      </Button>
+    </div>
+  );
 };
 
 export default Togglable;
