@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@apollo/client/react";
 import { ADD_AUTHOR_BORN, ALL_AUTHORS } from "../queries";
 import { useEffect } from "react";
 
-const Authors = (props) => {
+const Authors = ({ setMessage }) => {
   const result = useQuery(ALL_AUTHORS);
   const fetchedAuthors = result?.data?.allAuthors;
   const authors = fetchedAuthors || [];
@@ -11,25 +11,30 @@ const Authors = (props) => {
   const [name, setName] = useState("");
   const [born, setBorn] = useState("");
 
-  const [createBook] = useMutation(ADD_AUTHOR_BORN, {
+  const handleSuccess = () => {
+    setName("");
+    setBorn("");
+    setMessage({ text: "Author updated!" });
+  };
+
+  const [editAuthor] = useMutation(ADD_AUTHOR_BORN, {
     refetchQueries: [{ query: ALL_AUTHORS }],
+    onError: (e) => {
+      const messages = e.graphQLErrors.map((e) => e.message).join("\n");
+      setMessage({ text: messages, isError: true });
+    },
+    onCompleted: handleSuccess,
   });
 
   const submit = async (event) => {
     event.preventDefault();
     const variables = { name, setBornTo: Number(born) };
-    createBook({ variables });
-    setName("");
-    setBorn("");
+    editAuthor({ variables });
   };
 
   useEffect(() => {
     setName(fetchedAuthors?.length ? fetchedAuthors[0].name : "");
   }, [fetchedAuthors]);
-
-  if (!props.show) {
-    return null;
-  }
 
   if (result.loading) {
     return <div>loading...</div>;
@@ -62,7 +67,10 @@ const Authors = (props) => {
           <div>
             <label>
               name
-              <select onChange={({ target }) => setName(target.value)}>
+              <select
+                value={name}
+                onChange={({ target }) => setName(target.value)}
+              >
                 {authors.map((a) => (
                   <option key={a.name} value={a.name}>
                     {a.name}
