@@ -28,6 +28,26 @@ const EntryDetails = ({ entry, getDiagnosis }: Props) => {
           </ul>
         </div>
       );
+    case "Hospital":
+      return (
+        <div style={style}>
+          <p>
+            {entry.date}: <i>{entry.description}</i>
+          </p>
+
+          <p>hospital visit | treated by {entry.specialist}</p>
+          <p>discharge on {entry.discharge.date}</p>
+          <p>discharge criteria: {entry.discharge.criteria}</p>
+
+          <ul>
+            {entry.diagnosisCodes?.map((d, i) => (
+              <li key={i}>
+                {d}: {getDiagnosis(d)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
     case "OccupationalHealthcare":
       return (
         <div style={style}>
@@ -44,26 +64,6 @@ const EntryDetails = ({ entry, getDiagnosis }: Props) => {
               {entry.sickLeave?.endDate}
             </p>
           )}
-
-          <ul>
-            {entry.diagnosisCodes?.map((d, i) => (
-              <li key={i}>
-                {d}: {getDiagnosis(d)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      );
-    case "Hospital":
-      return (
-        <div style={style}>
-          <p>
-            {entry.date}: <i>{entry.description}</i>
-          </p>
-
-          <p>hospital visit | treated by {entry.specialist}</p>
-          <p>discharge on {entry.discharge.date}</p>
-          <p>discharge criteria: {entry.discharge.criteria}</p>
 
           <ul>
             {entry.diagnosisCodes?.map((d, i) => (

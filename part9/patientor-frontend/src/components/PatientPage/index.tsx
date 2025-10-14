@@ -5,9 +5,10 @@ import TransgenderIcon from "@mui/icons-material/Transgender";
 
 import patientService from "../../services/patients";
 
-import { Diagnosis, Gender, Patient } from "../../types";
+import { Diagnosis, Entry, Gender, Patient } from "../../types";
 import { useMatch } from "react-router-dom";
 import EntryDetails from "./EntryDetails";
+import EntryForm from "./EntryForm";
 
 interface Props {
   diagnoses: Diagnosis[];
@@ -16,11 +17,17 @@ interface Props {
 const PatientPage = ({ diagnoses }: Props) => {
   const [patient, setPatient] = useState<Patient>();
 
+  const match = useMatch("/patients/:id");
+
   const getDiagnosis = (code: Diagnosis["code"]) => {
     return diagnoses.find((d) => code === d.code)?.name ?? "";
   };
 
-  const match = useMatch("/patients/:id");
+  const onAddEntry = (entry: Entry) => {
+    setPatient((prev) =>
+      prev ? { ...prev, entries: prev?.entries.concat(entry) } : prev
+    );
+  };
 
   const fetchPatient = async (id?: string) => {
     const patient = id ? await patientService.getById(id) : undefined;
@@ -50,6 +57,12 @@ const PatientPage = ({ diagnoses }: Props) => {
 
       <p>ssn: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
+
+      <EntryForm
+        patientId={patient.id}
+        diagnoses={diagnoses}
+        onAddEntry={onAddEntry}
+      />
 
       {patient.entries.length ? (
         <>

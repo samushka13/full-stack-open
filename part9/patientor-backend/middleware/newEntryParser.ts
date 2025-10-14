@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import { NewPatientSchema } from "../utils/NewPatientSchema";
+import { NewEntrySchema } from "../utils/NewEntrySchema";
 
-export const newPatientParser = (
+export const newEntryParser = (
   req: Request,
   _res: Response,
   next: NextFunction
 ) => {
   try {
-    NewPatientSchema.parse(req.body);
+    NewEntrySchema.parse(req.body);
     console.log(req.body);
     next();
   } catch (error: unknown) {
