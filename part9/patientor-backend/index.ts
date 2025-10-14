@@ -1,7 +1,7 @@
 import express from "express";
 
-import DIAGNOSIS_DATA from "./data/diagnoses";
 import patientRouter from "./routes/patients";
+import diagnosisRouter from "./routes/diagnoses";
 
 const app = express();
 app.use(express.json());
@@ -18,15 +18,9 @@ app.use((_, res, next) => {
 
 const PORT = 3001;
 
-app.get("/api/ping", (_req, res) => {
-  res.send("pong");
-});
-
-app.get("/api/diagnoses", (_req, res) => {
-  res.send(DIAGNOSIS_DATA);
-});
-
+app.get("/api/ping", (_req, res) => res.send("pong"));
 app.use("/api/patients", patientRouter);
+app.use("/api/diagnoses", diagnosisRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
