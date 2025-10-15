@@ -1,10 +1,10 @@
 import { Link } from "react-router-native";
 
-import CustomText from "./CustomText";
+import CustomText from "../CustomText";
 
-const AppBarTab = ({ text, to }) => {
+const AppBarTab = ({ text, to, onPress }) => {
   return (
-    <Link to={to}>
+    <Link onPress={onPress} to={to}>
       <CustomText fontWeight={"bold"} color={"textTertiary"}>
         {text}
       </CustomText>

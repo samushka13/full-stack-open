@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import CustomText from "./CustomText";
+import CustomText from "../CustomText";
 
 const RepositoryItemKeyFigure = ({ value, subtitle }) => {
   return (

@@ -1,7 +1,7 @@
 import { View, Image, StyleSheet } from "react-native";
-import CustomText from "./CustomText";
+import CustomText from "../CustomText";
 import RepositoryItemKeyFigure from "./RepositoryItemKeyFigure";
-import theme from "../styles/theme";
+import theme from "../../styles/theme";
 
 const styles = StyleSheet.create({
   container: {
