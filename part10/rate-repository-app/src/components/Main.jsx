@@ -20,7 +20,7 @@ const Main = () => {
       <AppBar />
 
       <Routes>
-        <Route path="/" element={<RepositoryList />} />
+        <Route path="*" element={<RepositoryList />} />
         <Route path="/login" element={<SignIn />} />
       </Routes>
     </View>

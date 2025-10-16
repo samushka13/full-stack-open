@@ -29,7 +29,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const CustomText = ({ color, fontSize, fontWeight, style, ...props }) => {
+const CustomText = ({
+  color,
+  fontSize,
+  fontWeight,
+  style,
+  multiline,
+  ...props
+}) => {
   const textStyle = [
     styles.text,
     color === "textSecondary" && styles.colorTextSecondary,
@@ -41,7 +48,7 @@ const CustomText = ({ color, fontSize, fontWeight, style, ...props }) => {
     style,
   ];
 
-  return <NativeText style={textStyle} {...props} />;
+  return <NativeText multiline={multiline} style={textStyle} {...props} />;
 };
 
 export default CustomText;
