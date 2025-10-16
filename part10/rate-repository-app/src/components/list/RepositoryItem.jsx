@@ -15,7 +15,7 @@ const RepositoryItem = ({ item }) => {
   const roundToK = (n) => (n >= 1000 ? (n / 1000).toFixed(1) + "k" : n);
 
   return (
-    <View style={styles.container}>
+    <View testID="repositoryItem" style={styles.container}>
       <View style={{ flexDirection: "row" }}>
         <Image
           style={{ height: 50, aspectRatio: 1, borderRadius: 5 }}
