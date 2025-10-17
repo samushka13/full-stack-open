@@ -6,6 +6,7 @@ import { GET_CURRENT_USER } from "../../graphql/queries";
 import useAuthStorage from "../../hooks/useAuthStorage";
 
 import AppBarTab from "./AppBarTab";
+import useCurrentUser from "../../hooks/useCurrentUser";
 
 const styles = StyleSheet.create({
   container: {
@@ -23,10 +24,7 @@ const styles = StyleSheet.create({
 const AppBar = () => {
   const authStorage = useAuthStorage();
   const apolloClient = useApolloClient();
-
-  const { data } = useQuery(GET_CURRENT_USER);
-
-  const currentUserExists = Boolean(data?.me);
+  const { user } = useCurrentUser();
 
   const signOut = async () => {
     await authStorage.removeAccessToken();
@@ -44,10 +42,26 @@ const AppBar = () => {
 
         <View style={{ width: 20 }} />
 
-        {currentUserExists ? (
-          <AppBarTab text={"Sign Out"} to={"/login"} onPress={signOut} />
+        {user ? (
+          <>
+            <AppBarTab text={"Review"} to={"/review"} />
+
+            <View style={{ width: 20 }} />
+
+            <AppBarTab text={"My Reviews"} to={"/my-reviews"} />
+
+            <View style={{ width: 20 }} />
+
+            <AppBarTab text={"Sign Out"} to={"/login"} onPress={signOut} />
+          </>
         ) : (
-          <AppBarTab text={"Sign In"} to={"/login"} />
+          <>
+            <AppBarTab text={"Sign In"} to={"/login"} />
+
+            <View style={{ width: 20 }} />
+
+            <AppBarTab text={"Sign Up"} to={"/signup"} />
+          </>
         )}
       </ScrollView>
     </View>

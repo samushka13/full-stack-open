@@ -1,11 +1,20 @@
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
+
 import CustomText from "../CustomText";
+import ItemSeparator from "./ItemSeparator";
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+  },
+});
 
 const RepositoryItemKeyFigure = ({ value, subtitle }) => {
   return (
-    <View style={{ flex: 1, alignItems: "center" }}>
+    <View style={styles.container}>
       <CustomText fontWeight={"bold"}>{value}</CustomText>
-      <View style={{ height: 5 }} />
+      <ItemSeparator height={5} />
       <CustomText color={"textSecondary"}>{subtitle}</CustomText>
     </View>
   );

@@ -1,20 +1,35 @@
 import { gql } from "@apollo/client";
+import { USER_FRAGMENT } from "./fragments";
 
 export const GET_CURRENT_USER = gql`
   query {
     me {
-      id
-      username
+      ...UserParts
     }
   }
+  ${USER_FRAGMENT}
 `;
 
 export const GET_REPOSITORIES = gql`
-  query {
-    repositories {
+  query Repositories(
+    $first: Int
+    $after: String
+    $orderBy: AllRepositoriesOrderBy
+    $orderDirection: OrderDirection
+    $searchKeyword: String
+  ) {
+    repositories(
+      first: $first
+      after: $after
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      searchKeyword: $searchKeyword
+    ) {
+      totalCount
       edges {
         node {
           id
+          createdAt
           fullName
           description
           language
@@ -24,18 +39,25 @@ export const GET_REPOSITORIES = gql`
           reviewCount
           ownerAvatarUrl
         }
+        cursor
+      }
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
       }
     }
   }
 `;
 
 export const GET_REPOSITORY = gql`
-  query repository($id: ID!) {
+  query Repository($id: ID!, $first: Int, $after: String) {
     repository(id: $id) {
       id
       fullName
       url
-      reviews {
+      reviews(first: $first, after: $after) {
+        totalCount
         edges {
           node {
             id
@@ -47,6 +69,12 @@ export const GET_REPOSITORY = gql`
               username
             }
           }
+          cursor
+        }
+        pageInfo {
+          endCursor
+          startCursor
+          hasNextPage
         }
       }
     }

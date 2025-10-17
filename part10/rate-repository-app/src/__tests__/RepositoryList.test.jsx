@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react-native";
 
-import { RepositoryListContainer } from "../components/list/RepositoryList";
+import RepositoryListContainer from "../components/list/RepositoryListContainer";
 
 const TEST_DATA = {
   totalCount: 8,
@@ -46,7 +46,7 @@ const getRepoName = (i) => TEST_DATA.edges[i].node.fullName;
 describe("RepositoryList", () => {
   describe("RepositoryListContainer", () => {
     it("renders repository information correctly", () => {
-      render(<RepositoryListContainer repositories={TEST_DATA} />);
+      render(<RepositoryListContainer repositories={TEST_DATA.edges} />);
 
       const repositoryItems = screen.getAllByTestId("repositoryItem");
 

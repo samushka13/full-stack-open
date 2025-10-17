@@ -5,7 +5,7 @@ import {
   waitFor,
 } from "@testing-library/react-native";
 
-import { SignInContainer } from "../components/sign-in/SignIn";
+import SignInContainer from "../components/sign-in/SignInContainer";
 
 const TEST_USER = {
   username: "kalle",
@@ -14,7 +14,7 @@ const TEST_USER = {
 
 describe("SignIn", () => {
   describe("SignInContainer", () => {
-    it.only("calls onSubmit function with correct arguments when a valid form is submitted", async () => {
+    it("calls onSubmit function with correct arguments when a valid form is submitted", async () => {
       const onSubmit = jest.fn();
 
       render(<SignInContainer onSubmit={onSubmit} />);
