@@ -13,18 +13,21 @@ jobs:
   hello_world_job:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - name: Say hello
         run: |
           echo "Hello World!"
   date_job:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - name: Print date
         run: |
           date
   ls_job:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - name: Print content
         run: |
           ls -l
