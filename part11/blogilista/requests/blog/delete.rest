@@ -1,0 +1,3 @@
+@token = add_token_here
+DELETE http://localhost:3003/api/blogs/add_id_here
+Authorization: {{token}}

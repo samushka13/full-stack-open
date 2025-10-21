@@ -1,0 +1,11 @@
+@token = add_token_here
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: {{token}}
+
+{ 
+    "title": "Test Blog",
+    "author": "Test Username",
+    "url": "http://localhost:3003/api/blogs/test-blog",
+    "likes": 1
+}
