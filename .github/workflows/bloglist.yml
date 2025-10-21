@@ -34,9 +34,9 @@ jobs:
       - name: Build
         run: npm run ui:build
       - name: Run tests (backend)
-        run: npm start:test
+        run: npm run start:test
       - name: Run tests (frontend)
-        run: npm ui:test
+        run: npm run ui:test
       - name: Run tests (E2E)
         run: npm run test:e2e
       - name: Trigger deployment
