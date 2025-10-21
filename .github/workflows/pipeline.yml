@@ -13,7 +13,7 @@ defaults:
     working-directory: part11/full-stack-open-pokedex
 
 env:
-  SHOULD_DEPLOY: ${{ github.event_name == 'push' && contains(join(toJson(github.event.pull_request.commit.*.message), ', '), '#skip') }}
+  SHOULD_DEPLOY: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.pull_request.commit.*.message), ', '), '#skip') }}
 
 jobs:
   simple_deployment_pipeline:
@@ -45,14 +45,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Log pull request
-        env:
-          PULL_REQUEST: ${{ github.event.pull_request }}
-        run: echo "$PULL_REQUEST"
-      - name: Log pull request messages
-        env:
-          COMMIT_MESSAGES: ${{ join(toJson(github.event.pull_request.commit.*.message), ', ') }}
-        run: echo "$COMMIT_MESSAGES"
       - name: Bump version and push tag
         if: ${{ env.SHOULD_DEPLOY == 'true' }}
         uses: anothrNick/github-tag-action@1.64.0
