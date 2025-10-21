@@ -1,0 +1,55 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+defaults:
+  run:
+    working-directory: part11/blogilista
+
+env:
+  SHOULD_DEPLOY: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.pull_request.commit.*.message), ', '), '#skip') }}
+
+jobs:
+  deployment_pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: part11/blogilista/package-lock.json
+      - name: Install dependencies
+        run: npm install
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Check style
+        run: npm run lint
+      - name: Build
+        run: npm run ui:build
+      - name: Run tests (backend)
+        run: npm start:test
+      - name: Run tests (frontend)
+        run: npm ui:test
+      - name: Run tests (E2E)
+        run: npm run test:e2e
+      - name: Trigger deployment
+        if: ${{ env.SHOULD_DEPLOY == 'true' }}
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID_BLOGLIST }}?key=${{ secrets.RENDER_API_KEY_BLOGLIST }}
+  tag_release:
+    needs: [deployment_pipeline]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Bump version and push tag
+        if: ${{ env.SHOULD_DEPLOY == 'true' }}
+        uses: anothrNick/github-tag-action@c360518fb8131e99795f8208f8a6105ceca55ec2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
