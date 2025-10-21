@@ -40,6 +40,21 @@ jobs:
       - name: Trigger deployment
         if: ${{ env.SHOULD_DEPLOY == 'true' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+      - name: Trigger Discord webhook (success)
+        uses: rjstone/discord-webhook-notify@v2
+        if: ${{ env.SHOULD_DEPLOY == 'true' && success() }}
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          severity: info
+          text: A new version of Pokédex was deployed!
+      - name: Trigger Discord webhook (error)
+        uses: rjstone/discord-webhook-notify@v2
+        if: ${{ env.SHOULD_DEPLOY == 'true' && !success() }}
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          severity: error
+          text: Build failed!
+          details: Due to commit ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
@@ -51,3 +66,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+
