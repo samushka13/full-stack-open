@@ -1,4 +1,4 @@
-name: Deployment pipeline
+name: Bloglist pipeline
 
 on:
   push:
@@ -28,10 +28,10 @@ jobs:
       - name: Create .env
         run: |
           touch .env
-          echo TEST_MONGODB_URI=${{ secrets.TEST_MONGODB_URI_BLOGLIST }} >> .env
-          echo MONGODB_URI=${{ secrets.MONGODB_URI_BLOGLIST }} >> .env
-          echo PORT=3003 >> .env
-          echo SECRET=${{ secrets.JWT_SECRET_BLOGLIST }} >> .env
+          echo "TEST_MONGODB_URI=${{ secrets.TEST_MONGODB_URI_BLOGLIST }}" >> .env
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI_BLOGLIST }}" >> .env
+          echo "PORT=3003" >> .env
+          echo "SECRET=${{ secrets.JWT_SECRET_BLOGLIST }}" >> .env
           cat .env
       - name: Install dependencies
         run: npm install
@@ -42,11 +42,15 @@ jobs:
       - name: Build
         run: npm run ui:build
       - name: Run tests (backend)
-        run: npm run start:test
+        run: |
+          source .env
+          npm run start:test
       - name: Run tests (frontend)
         run: npm run ui:test
       - name: Run tests (E2E)
-        run: npm run test:e2e
+        run: |
+          source .env
+          npm run test:e2e
       - name: Trigger deployment
         if: ${{ env.SHOULD_DEPLOY == 'true' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID_BLOGLIST }}?key=${{ secrets.RENDER_API_KEY_BLOGLIST }}
