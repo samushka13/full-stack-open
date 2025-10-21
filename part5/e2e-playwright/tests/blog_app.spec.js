@@ -95,7 +95,6 @@ describe('The Bloglist App', () => {
     })
 
     test('a blog can not be deleted by another user', async ({ page }) => {
-      await loginWith(page, TEST_USER.username, TEST_USER.password)
       await addBlog(page, 'test title', 'test author', 'test url')
       await page.getByRole('button', { name: 'Logout' }).click()
       await loginWith(page, TEST_USER_2.username, TEST_USER_2.password)
@@ -104,7 +103,6 @@ describe('The Bloglist App', () => {
     })
 
     test('blogs are sorted based on likes in descending order', async ({ page }) => {
-      await loginWith(page, TEST_USER.username, TEST_USER.password)
       await addBlog(page, 'test title 1', 'test author', 'test url 1')
       await addAnotherBlog(page, 'test title 2', 'test author', 'test url 2')
       await addAnotherBlog(page, 'test title 3', 'test author', 'test url 3')
