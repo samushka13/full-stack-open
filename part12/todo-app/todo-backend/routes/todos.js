@@ -44,11 +44,11 @@ singleRouter.get('/', async (req, res) => {
 /* PUT todo. */
 singleRouter.put('/', async (req, res) => {
   const todoToUpdate = { 
-    text: res.body.text ?? req.todo.text,
-    done: res.body.done ?? req.todo.done
+    text: req.body?.text ?? req.todo.text,
+    done: req.body?.done ?? req.todo.done
   }
-  const updatedBlog = await Todo.findByIdAndUpdate(req.params.id, todoToUpdate)
-  response.status(200).json(updatedBlog)
+  const updatedTodo = await Todo.findByIdAndUpdate(req.todo._id, todoToUpdate)
+  res.status(200).json(updatedTodo)
 });
 
 router.use('/:id', findByIdMiddleware, singleRouter)
