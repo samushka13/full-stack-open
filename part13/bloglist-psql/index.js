@@ -1,60 +1,29 @@
 import express from "express";
 
-import Blog from "./models/blog.js";
-import CONFIG from "./utils/config.js";
+import { CONFIG } from "./utils/config.js";
+import { connectToDB } from "./utils/db.js";
+import { unknownEndpoint } from "./middleware/unknownEndpoint.js";
+
+import loginRouter from "./controllers/login.js";
+import blogsRouter from "./controllers/blogs.js";
+import usersRouter from "./controllers/users.js";
+import authorsRouter from "./controllers/authors.js";
 
 const app = express();
+
 app.use(express.json());
+app.use("/api/login", loginRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/blogs", blogsRouter);
+app.use("/api/authors", authorsRouter);
+app.use(unknownEndpoint);
 
-Blog.sync();
+const start = async () => {
+  await connectToDB();
 
-const baseUrl = "/api/blogs";
+  app.listen(CONFIG.PORT, () =>
+    console.log(`Server running on port ${CONFIG.PORT}`)
+  );
+};
 
-app.get(baseUrl, async (_, res) => {
-  const blogs = await Blog.findAll();
-  res.json(blogs);
-});
-
-app.get(`${baseUrl}/:id`, async (req, res) => {
-  const blog = await Blog.findByPk(req.params.id);
-
-  if (blog) {
-    res.json(blog);
-  } else {
-    res.status(404).end();
-  }
-});
-
-app.post(baseUrl, async (req, res) => {
-  try {
-    const blog = await Blog.create(req.body);
-    res.json(blog);
-  } catch (error) {
-    res.status(400).json({ error });
-  }
-});
-
-app.put(`${baseUrl}/:id`, async (req, res) => {
-  const blog = await Blog.findByPk(req.params.id);
-
-  if (blog) {
-    blog.likes = req.body.likes;
-    await blog.save();
-    res.json(blog);
-  } else {
-    res.status(404).end();
-  }
-});
-
-app.delete(`${baseUrl}/:id`, async (req, res) => {
-  try {
-    await Blog.destroy({ where: { id: req.params.id } });
-    res.status(204).end();
-  } catch (error) {
-    res.status(404).end();
-  }
-});
-
-app.listen(CONFIG.PORT, () =>
-  console.log(`Server running on port ${CONFIG.PORT}`)
-);
+start();

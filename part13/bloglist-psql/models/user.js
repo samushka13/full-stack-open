@@ -2,37 +2,31 @@ import { Model, DataTypes } from "sequelize";
 
 import { sequelize } from "../utils/db.js";
 
-class Blog extends Model {}
+class User extends Model {}
 
-Blog.init(
+User.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    author: {
-      type: DataTypes.TEXT,
-    },
-    title: {
-      type: DataTypes.TEXT,
+    username: {
+      type: DataTypes.STRING,
+      unique: true,
       allowNull: false,
+      validate: { isEmail: { msg: "Validation isEmail on username failed" } },
     },
-    url: {
-      type: DataTypes.TEXT,
+    name: {
+      type: DataTypes.STRING,
       allowNull: false,
-    },
-    likes: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
     },
   },
   {
     sequelize,
     underscored: true,
-    timestamps: false,
-    modelName: "blog",
+    modelName: "user",
   }
 );
 
-export default Blog;
+export default User;
