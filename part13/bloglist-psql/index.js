@@ -8,6 +8,8 @@ import loginRouter from "./controllers/login.js";
 import blogsRouter from "./controllers/blogs.js";
 import usersRouter from "./controllers/users.js";
 import authorsRouter from "./controllers/authors.js";
+import readingListRouter from "./controllers/readingLists.js";
+import sessionRouter from "./controllers/session.js";
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/blogs", blogsRouter);
 app.use("/api/authors", authorsRouter);
+app.use("/api/readinglist", readingListRouter);
+app.use("/api/logout", sessionRouter);
 app.use(unknownEndpoint);
 
 const start = async () => {

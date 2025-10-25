@@ -2,36 +2,39 @@ import { Router } from "express";
 import { Op } from "sequelize";
 
 import { blogFinder } from "../middleware/blogFinder.js";
-import { tokenExtractor } from "../middleware/tokenExtractor.js";
-import { userFinder } from "../middleware/userFinder.js";
+import { currentUserValidator } from "../middleware/currentUserValidator.js";
 
 import Blog from "../models/blog.js";
 import User from "../models/user.js";
 
 const blogsRouter = Router();
 
-blogsRouter.get("/", async (_, res) => {
-  let where = {};
+blogsRouter.get("/", async (req, res) => {
+  try {
+    let where = {};
 
-  if (req.query.search) {
-    const queryString = `%${req.query.search.toLowerCase()}%`;
+    if (req.query.search) {
+      const queryString = `%${req.query.search.toLowerCase()}%`;
+      const op = { [Op.iLike]: queryString };
+      where = { [Op.or]: [{ title: op }, { author: op }] };
+    }
 
-    where = {
-      [Op.or]: [
-        { title: { [Op.iLike]: queryString } },
-        { author: { [Op.iLike]: queryString } },
-      ],
-    };
+    const blogs = await Blog.findAll({
+      order: [["likes", "DESC"]],
+      attributes: { exclude: ["userId"] },
+      include: { model: User, attributes: ["name"] },
+      where,
+    });
+
+    res.json(blogs);
+  } catch (e) {
+    if (e.toString().includes("is not associated to")) {
+      const blogs = await Blog.findAll();
+      return res.json(blogs);
+    }
+
+    return res.status(400).json({ error: "blogs could not be fetched" });
   }
-
-  const blogs = await Blog.findAll({
-    order: [["likes", "DESC"]],
-    attributes: { exclude: ["userId"] },
-    include: { model: User, attributes: ["name"] },
-    where,
-  });
-
-  res.json(blogs);
 });
 
 blogsRouter.get("/:id", blogFinder, async (req, res) => {
@@ -42,7 +45,7 @@ blogsRouter.get("/:id", blogFinder, async (req, res) => {
   }
 });
 
-blogsRouter.post("/", [tokenExtractor, userFinder], async (req, res) => {
+blogsRouter.post("/", currentUserValidator, async (req, res) => {
   try {
     const blog = await Blog.create({ ...req.body, userId: req.user.id });
     res.json(blog);
@@ -63,7 +66,7 @@ blogsRouter.put("/:id", blogFinder, async (req, res) => {
 
 blogsRouter.delete(
   "/:id",
-  [blogFinder, tokenExtractor, userFinder],
+  [blogFinder, currentUserValidator],
   async (req, res) => {
     if (req.blog.userId === req.user.id) {
       await req.blog.destroy();
