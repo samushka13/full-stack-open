@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { addBlog, getFilteredBlogs, likeBlog } from "../services/blogs";
+import { addBlog, likeBlog } from "../services/blogs";
 
 export const createBlog = async (formData: FormData) => {
   const title = formData.get("title") as string;
