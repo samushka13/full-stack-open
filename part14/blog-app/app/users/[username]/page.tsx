@@ -1,6 +1,6 @@
+import { getUserWithBlogs } from "@/app/services/users";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getUserWithBlogs } from "../../services/users";
 
 const UserPage = async ({
   params,

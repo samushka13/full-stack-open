@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { getBlogById } from "../../services/blogs";
 import { addLikeToBlog } from "@/app/actions/blogs";
+import { getBlogById } from "@/app/services/blogs";
 
 const BlogPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;

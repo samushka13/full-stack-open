@@ -36,6 +36,13 @@
       "when": 1787775954245,
       "tag": "0004_charming_adam_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1787776640105,
+      "tag": "0005_lowly_hercules",
+      "breakpoints": true
     }
   ]
 }
