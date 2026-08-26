@@ -1,57 +1,46 @@
-type Blog = {
-  id: number;
-  title: string;
-  author: string;
-  url: string;
-  likes: number;
+import { asc, eq, ilike, sql } from "drizzle-orm";
+import { db } from "../../db";
+import { blogs } from "../../db/schema";
+
+export const getBlogs = async (filter?: string) => {
+  if (filter) {
+    return db.query.blogs.findMany({
+      where: ilike(blogs.title, `%${filter}%`),
+      orderBy: asc(blogs.title),
+    });
+  }
+
+  return await db.query.blogs.findMany();
 };
 
-const blogs: Blog[] = [
-  {
-    id: 1,
-    title: "Blog 1",
-    author: "Author 1",
-    url: "https://example.com/blog1",
-    likes: 10,
-  },
-  {
-    id: 2,
-    title: "Blog 2",
-    author: "Author 2",
-    url: "https://example.com/blog2",
-    likes: 20,
-  },
-  {
-    id: 3,
-    title: "Blog 3",
-    author: "Author 3",
-    url: "https://example.com/blog3",
-    likes: 30,
-  },
-];
-
-let nextId = 4;
-
-export const getBlogs = () => {
-  return blogs;
-};
-
-export const addBlog = (
+export const addBlog = async (
   title: string,
   author: string,
   url: string,
   likes: number,
+  userId: number,
 ) => {
-  blogs.push({ id: nextId++, title, author, url, likes });
+  const user = await db.query.users.findFirst({
+    orderBy: sql`RANDOM()`,
+  });
+
+  return await db
+    .insert(blogs)
+    .values({ title, author, url, likes, userId: user?.id ?? userId })
+    .returning();
 };
 
-export const getBlogById = (id: number) => {
-  return blogs.find((blog) => blog.id === id);
+export const getBlogById = async (id: number) => {
+  return await db.query.blogs.findFirst({ where: eq(blogs.id, id) });
 };
 
-export const likeBlog = (id: number) => {
-  const blog = blogs.find((blog) => blog.id === id);
+export const likeBlog = async (id: number) => {
+  const blog = await getBlogById(id);
+
   if (blog) {
-    blog.likes += 1;
+    await db
+      .update(blogs)
+      .set({ likes: blog.likes + 1 })
+      .where(eq(blogs.id, id));
   }
 };

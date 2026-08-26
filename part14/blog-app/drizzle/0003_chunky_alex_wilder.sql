@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "blogs" integer DEFAULT 0 NOT NULL;
