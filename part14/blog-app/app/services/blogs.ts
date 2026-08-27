@@ -5,7 +5,7 @@ import { getCurrentUser } from "./session";
 
 export const getBlogs = async (filter?: string) => {
   if (filter) {
-    return db.query.blogs.findMany({
+    return await db.query.blogs.findMany({
       where: ilike(blogs.title, `%${filter}%`),
       orderBy: asc(blogs.title),
     });
@@ -14,12 +14,7 @@ export const getBlogs = async (filter?: string) => {
   return await db.query.blogs.findMany();
 };
 
-export const addBlog = async (
-  title: string,
-  author: string,
-  url: string,
-  likes: number,
-) => {
+export const addBlog = async (title: string, author: string, url: string) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -28,7 +23,7 @@ export const addBlog = async (
 
   return await db
     .insert(blogs)
-    .values({ title, author, url, likes, userId: user.id })
+    .values({ title, author, url, userId: user.id })
     .returning();
 };
 

@@ -1,9 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { users } from "@/db/schema";
 import { db } from "@/db";
+import { auth } from "@/auth";
+import { randomUUID } from "crypto";
+import { eq } from "drizzle-orm";
 
 export const registerUser = async (
   prevState: {
@@ -45,4 +49,21 @@ export const registerUser = async (
   await db.insert(users).values({ username, name, passwordHash });
 
   redirect("/login");
+};
+
+export const updateApiToken = async () => {
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    throw new Error("Unauthorized");
+  }
+
+  const token = randomUUID();
+
+  await db
+    .update(users)
+    .set({ token })
+    .where(eq(users.username, session.user.email));
+
+  revalidatePath("/me");
 };

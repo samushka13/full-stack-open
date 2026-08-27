@@ -41,7 +41,7 @@ export const createBlog = async (
     return { errors, values: { title, author, url }, success: false };
   }
 
-  await addBlog(title, author, url, 0);
+  await addBlog(title, author, url);
 
   revalidatePath("/blogs");
   return { errors: {}, success: true };
