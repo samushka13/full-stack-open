@@ -12,6 +12,7 @@ const MarkAsUnreadButton = ({ readingListItemId }: Props) => {
 
   return (
     <button
+      data-testid={"mark-unread-" + readingListItemId}
       type="button"
       disabled={isPending}
       onClick={() => {

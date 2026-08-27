@@ -8,6 +8,7 @@ export default function TokenGeneratorButton() {
 
   return (
     <button
+      data-testid="generate-token-button"
       type="button"
       disabled={isPending}
       onClick={() => {

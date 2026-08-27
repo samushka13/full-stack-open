@@ -15,27 +15,27 @@ export default function NavBar() {
       <NavLink href="/">The Blog App</NavLink>
 
       <div className="ml-auto flex items-center gap-4">
-        <NavLink href="/blogs">Blogs</NavLink>
+        <NavLink href="/blogs">blogs</NavLink>
         {" | "}
-        <NavLink href="/users">Users</NavLink>
+        <NavLink href="/users">users</NavLink>
         {" | "}
         {session ? (
           <>
-            <NavLink href="/blogs/new">Add blog</NavLink>
+            <NavLink href="/blogs/new">add blog</NavLink>
             {" | "}
-            <NavLink href="/me">Me</NavLink>
+            <NavLink href="/me">me</NavLink>
             {" | "}
             <button onClick={handleSignOut} className="hover:text-gray-300">
-              Logout
+              logout
             </button>
             {" | "}
             <em className="text-gray-300">{session.user?.name} logged in</em>
           </>
         ) : (
           <>
-            <NavLink href="/login">Login</NavLink>
+            <NavLink href="/login">login</NavLink>
             {" | "}
-            <NavLink href="/register">Register</NavLink>
+            <NavLink href="/register">register</NavLink>
           </>
         )}
       </div>

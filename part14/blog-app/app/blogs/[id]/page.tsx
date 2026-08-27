@@ -25,15 +25,18 @@ const BlogPage = async ({ params }: { params: Promise<{ id: string }> }) => {
     user?.id !== undefined && blog.userId !== user.id;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div data-testid="blog-detail" className="min-h-screen bg-white">
       <div className="mx-auto max-w-2xl px-4 py-8">
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+          <h2
+            data-testid="blog-title"
+            className="text-3xl font-bold tracking-tight text-slate-900"
+          >
             {blog.title}
           </h2>
 
           <div className="mt-4 space-y-2 text-sm text-slate-500">
-            <p>
+            <p data-testid="blog-author">
               <span className="font-medium text-slate-700">Author:</span>{" "}
               {blog.author}
             </p>
@@ -89,6 +92,7 @@ const BlogPage = async ({ params }: { params: Promise<{ id: string }> }) => {
               <input type="hidden" name="id" value={blog.id} />
 
               <button
+                data-testid="add-to-reading-list-button"
                 type="submit"
                 className="group rounded-lg bg-indigo-600 px-5 py-2.5 font-medium text-white transition hover:bg-indigo-700"
               >

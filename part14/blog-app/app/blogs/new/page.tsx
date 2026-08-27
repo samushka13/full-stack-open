@@ -30,32 +30,49 @@ const NewBlog = () => {
             Add blog
           </h2>
 
-          <input
-            type="text"
-            name="title"
-            required
-            placeholder="Title"
-            defaultValue={state.values?.title}
-            className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-          />
-          <input
-            type="text"
-            name="author"
-            required
-            placeholder="Author"
-            defaultValue={state.values?.author}
-            className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-          />
-          <input
-            type="url"
-            name="url"
-            required
-            placeholder="URL"
-            defaultValue={state.values?.url}
-            className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-          />
+          <div>
+            <label>
+              Title
+              <input
+                type="text"
+                name="title"
+                required
+                placeholder="Title"
+                defaultValue={state.values?.title}
+                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+              />
+            </label>
+          </div>
+
+          <div>
+            <label>
+              Author
+              <input
+                type="text"
+                name="author"
+                required
+                placeholder="Author"
+                defaultValue={state.values?.author}
+                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              URL
+              <input
+                type="url"
+                name="url"
+                required
+                placeholder="URL"
+                defaultValue={state.values?.url}
+                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+              />
+            </label>
+          </div>
 
           <button
+            data-testid="create-blog-button"
             type="submit"
             className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 active:scale-[0.98]"
           >
